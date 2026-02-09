@@ -19,7 +19,7 @@ nav {
 
 
 nav img {
-    width: 180px; 
+    width: 100px; 
     height: auto;
 }
 
@@ -35,12 +35,16 @@ nav ul li a {
     font-weight: 500;
     transition: 0.3s;
 }
-
+nav img:hover{
+    transform: scale(1.05);
+    transition: 0.3s;
+}
 nav ul li a:hover {
     color: #015a17;
 }
 
-nav button {
+nav .btn-connexion {
+    font-style:normal;
     background-color: #00704b;
     border-radius: 50px;
     color: white;
@@ -51,7 +55,7 @@ nav button {
     transition: 0.3s;
 }
 
-nav button:hover {
+nav .btn-connexion:hover {
     transform: scale(1.05);
     background-color: #005a3c;
 }
