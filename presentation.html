@@ -1,1 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Produits | L'Île au Fruit</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="presentation.css">
+</head>
 
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html">
+                    <img src="lgoo.png" alt="Retour à l'accueil">
+                </a>
+            </div>
+            <ul>
+                <li><a href="presentation.html" class="active">Menu</a></li>
+                <li><a href="order.html">Plat du Jour</a></li>
+                <li><a href="profil.html">Profil</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <a href="connexion.html" class="btn-connexion">Se connecter</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 1ere section pour Titre / Menu + decouvrez nos produits -->
+         <section class="page-header">
+            <h1> Notre carte </h1>
+            <h3> Découvrez nos créations fraîches et gourmandes </h3>
+         </section>
+        <!-- 2eme section pour recherche (onglet qui permet de rechercher) + filtre (produit allergenes, prix, ingredients) -->
+         <section class="recherche-filtre">
+            <div class="recherche-container">
+                <div class="barre-de-recherche">
+                    <input type="text" placeholder="🔍 Rechercher un produit, un fruit..." id="RechercheInput">
+                </div>
+
+                <div class="filtre">
+                    <!-- Filtre Catégorie -->
+                    <div class="filtre-groupe">
+                        <label for="categorie">Catégorie :</label>
+                        <select id="categorie" class="filtre-select">
+                            <option value="">Toutes les catégories</option>
+                            <option value="bowls">🥗 Bowls Tropicaux</option>
+                            <option value="jus">🥤 Jus & Smoothies</option>
+                            <option value="desserts">🍰 Desserts</option>
+                            <option value="plats">🍽️ Plats Gourmands</option>
+                            <option value="boissons">☕ Boissons Chaudes</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtre Allergènes -->
+                    <div class="filtre-groupe">
+                        <label for="allergenes">Régime :</label>
+                        <select id="allergenes" class="filtre-select">
+                            <option value="">Tous les régimes</option>
+                            <option value="vegan">🌱 Vegan</option>
+                            <option value="vegetarien">🥕 Végétarien</option>
+                            <option value="sans-gluten">🌾 Sans gluten</option>
+                            <option value="sans-lactose">🥛 Sans lactose</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtre Prix -->
+                    <div class="filtre-groupe">
+                        <label for="prix">Prix :</label>
+                        <select id="prix" class="filtre-select">
+                            <option value="">Tous les prix</option>
+                            <option value="0-5">Moins de 5€</option>
+                            <option value="5-10">5€ - 10€</option>
+                            <option value="10-15">10€ - 15€</option>
+                            <option value="15+">Plus de 15€</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+         </section>
+        <!-- 3eme section pour les differents produits/menus dispos et leur infos -->
+
+        <section class="products-section">
+            <div class="product-grid">
+
+                <!-- Produit 1 -->
+                <div class="product-card" data-category="bowls" data-price="8.90">
+                    <div class="product-badge bestseller">⭐ Bestseller</div>
+                    <div class="product-image">
+                        <img src="test.png" alt="Smoothie Bowl Mangue-Passion">
+                    </div>
+                    <div class="product-info">
+                        <h3>Smoothie Bowl Mangue-Passion</h3>
+                        <p class="product-description">
+                            Bowl de smoothie à la mangue, fruit de la passion, granola croquant et noix de coco fraîche
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegan">🌱 Vegan</span>
+                            <span class="tag sans-gluten">🌾 Sans gluten</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">8,90 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 2 -->
+                <div class="product-card" data-category="plats" data-price="9.50">
+                    <div class="product-badge special">🔥 Plat du jour</div>
+                    <div class="product-image">
+                        <img src="test.png" alt="Salade Pastèque & Feta">
+                    </div>
+                    <div class="product-info">
+                        <h3>Salade Pastèque & Feta</h3>
+                        <p class="product-description">
+                            Pastèque fraîche, feta crémeuse, menthe, huile d'olive et graines de tournesol
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegetarian">🥕 Végétarien</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">9,50 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 3 -->
+                <div class="product-card" data-category="jus" data-price="6.50">
+                    <div class="product-badge new">🆕 Nouveau</div>
+                    <div class="product-image">
+                        <img src="test.png" alt="Green Power Juice">
+                    </div>
+                    <div class="product-info">
+                        <h3>Green Power Juice</h3>
+                        <p class="product-description">
+                            Jus détox au kiwi, épinards, concombre, citron vert et gingembre frais
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegan">🌱 Vegan</span>
+                            <span class="tag sans-gluten">🌾 Sans gluten</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">6,50 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 4 -->
+                <div class="product-card" data-category="plats" data-price="12.90">
+                    <div class="product-image">
+                        <img src="test.png" alt="Poké Bowl Ananas-Saumon">
+                    </div>
+                    <div class="product-info">
+                        <h3>Poké Bowl Ananas-Saumon</h3>
+                        <p class="product-description">
+                            Riz sushi, saumon frais, ananas caramélisé, avocat, edamame et sauce soja sucrée
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag">🐟 Poisson</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">12,90 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 5 -->
+                <div class="product-card" data-category="desserts" data-price="5.90">
+                    <div class="product-image">
+                        <img src="test.png" alt="Tarte Fraise-Basilic">
+                    </div>
+                    <div class="product-info">
+                        <h3>Tarte Fraise-Basilic</h3>
+                        <p class="product-description">
+                            Pâte sablée maison, crème pâtissière vanille, fraises fraîches et basilic
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegetarian">🥕 Végétarien</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">5,90 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 6 -->
+                <div class="product-card" data-category="boissons" data-price="4.90">
+                    <div class="product-image">
+                        <img src="test.png" alt="Latte Coco-Curcuma">
+                    </div>
+                    <div class="product-info">
+                        <h3>Latte Coco-Curcuma</h3>
+                        <p class="product-description">
+                            Lait de coco, curcuma frais, miel et une touche de cannelle
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegan">🌱 Vegan</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">4,90 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 7 -->
+                <div class="product-card" data-category="bowls" data-price="9.90">
+                    <div class="product-image">
+                        <img src="test.png" alt="Acai Bowl Myrtilles">
+                    </div>
+                    <div class="product-info">
+                        <h3>Acai Bowl Myrtilles</h3>
+                        <p class="product-description">
+                            Açai brésilien, myrtilles fraîches, banane, granola et beurre d'amande
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegan">🌱 Vegan</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">9,90 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 8 -->
+                <div class="product-card" data-category="jus" data-price="5.50">
+                    <div class="product-image">
+                        <img src="test.png" alt="Jus Orange Sanguine">
+                    </div>
+                    <div class="product-info">
+                        <h3>Jus Orange Sanguine</h3>
+                        <p class="product-description">
+                            100% orange sanguine pressée à froid, sans sucre ajouté
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegan">🌱 Vegan</span>
+                            <span class="tag sans-gluten">🌾 Sans gluten</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">5,50 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 9 -->
+                <div class="product-card" data-category="plats" data-price="7.90">
+                    <div class="product-image">
+                        <img src="test.png" alt="Toast Avocat-Œuf">
+                    </div>
+                    <div class="product-info">
+                        <h3>Toast Avocat-Œuf</h3>
+                        <p class="product-description">
+                            Pain complet toasté, avocat écrasé, œuf poché et graines de sésame
+                        </p>
+                        <div class="product-tags">
+                            <span class="tag vegetarian">🥕 Végétarien</span>
+                        </div>
+                        <div class="product-footer">
+                            <span class="price">7,90 €</span>
+                            <button class="btn-add">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+    </main>
+
+
+
+
+
+</body>
+
+
+
+
+</html>
