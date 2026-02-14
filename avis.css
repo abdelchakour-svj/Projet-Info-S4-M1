@@ -1,0 +1,143 @@
+
+:root {
+    --primary-color: #f3b121; 
+    --text-color: #2d4a22;    
+    --bg-soft: #f9f8f3;       
+    --white: #ffffff;
+    --border-radius: 20px;
+}
+/tout formater sur la page cm ca trkl/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-image: url("bg2test.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+
+.login-container {
+    flex: 1; 
+    width: 100%;
+    max-width: 450px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.logo-section .logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.logo-section .logo:hover {
+    transform: rotate(-5px) scale(1.1);
+}
+
+.Review-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 35px 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.auth-tabs {
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 30px;
+    font-weight: 700;
+    color: var(--text-color);
+    border-bottom: 3px solid var(--primary-color);
+    cursor: default;
+    font-size: 1.1rem;
+}
+
+.auth-form h2 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+input, 
+textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    background: #fafafa;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+textarea {
+    min-height: 120px; /* Taille minimale par défaut */
+    max-height: 300px; /* Empêche de trop déformer la page */
+    resize: vertical;  /* Seule la hauteur est modifiable par l'utilisateur */
+    line-height: 1.5;
+}
+
+input:focus, 
+textarea:focus {
+    border-color: var(--primary-color);
+    background: var(--white);
+    box-shadow: 0 0 8px rgba(243, 177, 33, 0.2);
+}
+
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(243, 177, 33, 0.3);
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #e1a11e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(243, 177, 33, 0.4);
+}
+
+footer {
+    background: var(--text-color);
+    color: var(--white);
+    padding: 30px 10px;
+    text-align: center;
+    font-size: 0.85rem;
+    margin-top: 20px;
+}
+
+footer p {
+    margin-bottom: 5px;
+    opacity: 0.9;
+}
