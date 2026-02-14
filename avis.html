@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avis - Île au Fruit</title>
+    <link rel="stylesheet" href="avis.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <main class="login-container">
+        <header class="logo-section">
+            <a href="index.html">
+                <img src="lgoo.png" alt="Logo L'Île au Fruit" class="logo">
+            </a>
+        </header>
+
+        <section class="Review-card">
+            <nav class="auth-tabs">
+                <a href="avis.html">
+                    <button class="tab-btn">Avis</button>
+                </a>      
+            </nav>
+
+            <form class="auth-form">
+                <h2>Bienvenue</h2>
+                
+                <div class="input-group">
+                    <input type="text" placeholder="Plat commander" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="date" placeholder="date de la commande" required>
+                </div>
+                <div class="input-group">
+                    <input type="number" placeholder="Note sur 5" min="1" max="5"required>
+                </div>
+
+                <div class="input-group">
+                    <textarea cols ="50" rows="10" placeholder="Votre avis" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Poster un avis</button>
+                
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 L'Île au Fruit - Tous droits réservés.</p>
+        <p>123 Rue des Fruits, 75000 Paris | Tél : 01 23 45 67 89 | Email : contact@ileaufruit.fr</p>
+       
+    </footer>
+</body>
+</html>
