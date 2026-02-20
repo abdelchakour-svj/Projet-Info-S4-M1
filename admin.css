@@ -13,13 +13,12 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 20px; 
-    background: rgba(255, 255, 255, 0.349); 
+    padding: 20px 20px;
+    background: rgba(255, 255, 255, 0.349);
 }
 
-
 nav img {
-    width: 100px; 
+    width: 100px;
     height: auto;
 }
 
@@ -35,16 +34,18 @@ nav ul li a {
     font-weight: 500;
     transition: 0.3s;
 }
-nav img:hover{
+
+nav img:hover {
     transform: scale(1.05);
     transition: 0.3s;
 }
+
 nav ul li a:hover {
     color: #015a17;
 }
 
 nav .btn-connexion {
-    font-style:normal;
+    font-style: normal;
     background-color: #00704b;
     border-radius: 50px;
     color: white;
@@ -79,6 +80,7 @@ nav .btn-connexion:hover {
     margin: 0;
 }
 
+/* Section stats */
 .stats-section {
     padding: 20px;
     max-width: 1200px;
@@ -106,3 +108,67 @@ nav .btn-connexion:hover {
     margin-bottom: 10px;
 }
 
+/* Tableau utilisateurs */
+.users-section {
+    max-width: 1200px;
+    margin: 30px auto 60px;
+    padding: 0 20px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.users-table thead {
+    background: #015a17;
+    color: white;
+}
+
+.users-table th {
+    padding: 18px 20px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.users-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.users-table tbody tr:hover {
+    background: #f9fdf9;
+}
+
+.btn-voir {
+    background-color: #ffd900;
+    color: #4d3d00;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-voir:hover {
+    transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.5);
+    margin-top: 50px;
+}
+
+footer p {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
