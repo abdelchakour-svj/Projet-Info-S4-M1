@@ -1,1 +1,191 @@
+/* Suppression des marges par défaut */
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url("bg2test.png");
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
 
+/* Barre de navigation */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px; 
+    background: rgba(255, 255, 255, 0.349); 
+}
+
+
+nav img {
+    width: 100px; 
+    height: auto;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 500;
+    transition: 0.3s;
+}
+nav img:hover{
+    transform: scale(1.05);
+    transition: 0.3s;
+}
+nav ul li a:hover {
+    color: #015a17;
+}
+
+nav .btn-connexion {
+    font-style:normal;
+    background-color: #00704b;
+    border-radius: 50px;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+nav .btn-connexion:hover {
+    transform: scale(1.05);
+    background-color: #005a3c;
+}
+
+
+/* Section page header */
+.page-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+}
+
+.page-header h1 {
+    font-size: 60px;
+    color: #015a17;
+    margin: 0 0 10px 0;
+}
+
+.page-header h3 {
+    font-size: 22px;
+    color: #333;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Section livraison-infos */
+.livraison-infos {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.info-card h2 {
+    font-size: 18px;
+    color: #015a17;
+    margin: 0 0 8px 0;
+}
+
+.info-card p {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Section boutons */
+.livraison-boutons {
+    max-width: 600px;
+    margin: 30px auto 60px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-maps, .btn-waze {
+    display: block;
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-maps {
+    background-color: #015a17;
+    color: white;
+}
+
+.btn-waze {
+    background-color: #00c4ff;
+    color: white;
+}
+
+.btn-livree {
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    background-color: #ffd900;
+    color: #4d3d00;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+}
+
+.btn-maps:hover, .btn-waze:hover, .btn-livree:hover {
+    transform: scale(1.03);
+}
+
+/* Footer */
+footer {
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+footer p {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Adaptation mobile */
+@media (max-width: 768px) {
+    nav ul {
+        display: none;
+    }
+
+    .page-header h1 {
+        font-size: 36px;
+    }
+
+    .info-card p {
+        font-size: 26px;
+    }
+
+    .btn-maps, .btn-waze, .btn-livree {
+        padding: 25px;
+        font-size: 20px;
+    }
+}
