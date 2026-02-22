@@ -1,7 +1,7 @@
 :root {
-    --primary-color: #f3b121; /* Le jaune orangé du bouton */
-    --text-color: #2d4a22;    /* Le vert foncé pour le texte */
-    --bg-soft: #f9f8f3;       /* Fond crème léger */
+    --primary-color: #f3b121; 
+    --text-color: #2d4a22;    
+    --bg-soft: #f9f8f3;      
     --white: #ffffff;
     --border-radius: 20px;
 }
