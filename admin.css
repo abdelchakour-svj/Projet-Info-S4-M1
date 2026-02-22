@@ -1,0 +1,78 @@
+.stats-section {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.stat-number {
+    font-size: 48px;
+    font-weight: 700;
+    color: #015a17;
+    margin-bottom: 10px;
+}
+
+.users-section {
+    max-width: 1200px;
+    margin: 30px auto 60px;
+    padding: 0 20px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.users-table thead {
+    background: #015a17;
+    color: white;
+}
+
+.users-table th {
+    padding: 18px 20px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.users-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.users-table tbody tr:hover {
+    background: #f9fdf9;
+}
+
+.btn-voir {
+    background-color: #ffd900;
+    color: #4d3d00;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.btn-voir:hover {
+    transform: scale(1.05);
+}
