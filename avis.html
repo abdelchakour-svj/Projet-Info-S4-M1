@@ -3,46 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avis - Île au Fruit</title>
+    <title>Notation | L'Île au Fruit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="avis.css">
 </head>
 <body>
-    <div class="background-overlay"></div>
-    
-    <main class="login-container">
-        <header class="logo-section">
-            <a href="index.html">
-                <img src="image/lgoo.png" alt="Logo L'Île au Fruit" class="logo">
-            </a>
-        </header>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html">
+                    <img src="image/lgoo.png" alt="Retour à l'accueil">
+                </a>
+            </div>
+            <ul>
+                <li><a href="presentation.html">Menu</a></li>
+                <li><a href="profil.html">Profil</a></li>
+                <li><a href="avis.html" class="active">Avis</a></li>
+            </ul>
+            <a href="connexion.html" class="btn-deconnexion">Déconnexion</a>
+        </nav>
+    </header>
 
-        <section class="Review-card">
-            <nav class="auth-tabs">
-                <a href="avis.html">
-                    <button class="tab-btn">Avis</button>
-                </a>      
-            </nav>
+    <main class="avis-main">
+        <section class="avis-card">
+            <h1>⭐ Votre avis</h1>
+            <p class="avis-subtitle">Notez votre commande et la qualité de la livraison</p>
 
             <form class="auth-form">
-                <h2>Bienvenue</h2>
-                
+
+                <div class="avis-section-titre">🚴 Livraison</div>
+
                 <div class="input-group">
-                    <input type="text" placeholder="Plat commander" required>
+                    <label>Note de la livraison</label>
+                    <div class="etoiles" id="etoiles-livraison">
+                        <span class="etoile" data-value="1">★</span>
+                        <span class="etoile" data-value="2">★</span>
+                        <span class="etoile" data-value="3">★</span>
+                        <span class="etoile" data-value="4">★</span>
+                        <span class="etoile" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" name="note_livraison" id="note-livraison" required>
                 </div>
 
                 <div class="input-group">
-                    <input type="date" placeholder="date de la commande" required>
+                    <label>Commentaire sur la livraison</label>
+                    <textarea placeholder="Rapidité, état du colis, livreur..."></textarea>
                 </div>
+
+                <div class="avis-section-titre">🍽️ Produits</div>
+
                 <div class="input-group">
-                    <input type="number" placeholder="Note sur 5" min="1" max="5"required>
+                    <label>Plat commandé</label>
+                    <input type="text" placeholder="Ex : Smoothie Bowl Mangue-Passion" required>
                 </div>
 
                 <div class="input-group">
-                    <textarea cols ="50" rows="10" placeholder="Votre avis" required></textarea>
+                    <label>Date de la commande</label>
+                    <input type="date" required>
                 </div>
 
-                <button type="submit" class="submit-btn">Poster un avis</button>
-                
+                <div class="input-group">
+                    <label>Note des produits</label>
+                    <div class="etoiles" id="etoiles-produits">
+                        <span class="etoile" data-value="1">★</span>
+                        <span class="etoile" data-value="2">★</span>
+                        <span class="etoile" data-value="3">★</span>
+                        <span class="etoile" data-value="4">★</span>
+                        <span class="etoile" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" name="note_produits" id="note-produits" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Votre avis sur les produits</label>
+                    <textarea placeholder="Fraîcheur, goût, présentation..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Poster mon avis</button>
             </form>
         </section>
     </main>
@@ -50,7 +88,6 @@
     <footer>
         <p>&copy; 2026 L'Île au Fruit - Tous droits réservés.</p>
         <p>123 Rue des Fruits, 75000 Paris | Tél : 01 23 45 67 89 | Email : contact@ileaufruit.fr</p>
-       
     </footer>
 </body>
 </html>
