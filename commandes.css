@@ -1,276 +1,148 @@
-/* CSS COMMANDES  */
-
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    background-image: url("image/bg2test.png");
-    background-size: cover;
-    color: #333;
-}
-
-/* NAVIGATION */
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.349);
-}
-
-nav img {
-    width: 100px;
-    height: auto;
-    transition: 0.3s;
-}
-
-nav img:hover {
-    transform: scale(1.05);
-}
-
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 40px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #1a1a1a;
-    font-weight: 500;
-    transition: 0.3s;
-}
-
-nav ul li a:hover,
-nav ul li a.active {
-    color: #015a17;
-}
-
-.btn-connexion {
-    background-color: #00704b;
-    border-radius: 50px;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: 0.3s;
-    font-family: 'Poppins', sans-serif;
-}
-
-.btn-connexion:hover {
-    transform: scale(1.05);
-    background-color: #005a3c;
-}
-
-/* PAGE HEADER */
-.page-header {
-    text-align: center;
-    padding: 60px 20px 40px;
-}
-
-.page-header h1 {
-    font-size: 60px;
-    color: #015a17;
-    margin: 0 0 10px 0;
-}
-
-.page-header h3 {
-    font-size: 22px;
-    color: #333;
-    font-weight: 400;
-    margin: 0;
-}
-
-/* CONTENU PRINCIPAL */
-main {
+.commandes-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 auto 60px;
     padding: 0 20px;
 }
 
-/* SECTIONS */
-.section-commandes {
-    margin-bottom: 50px;
+.commandes-colonne {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.section-commandes h2 {
-    font-size: 22px;
-    color: #015a17;
-    margin-bottom: 5px;
+.colonne-titre {
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
 }
 
-.nb-commandes {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 20px;
+.colonne-titre h2 {
+    margin: 0;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* COMMANDES */
-.commande {
+.colonne-titre.a-preparer {
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    color: #e65100;
+}
+
+.colonne-titre.en-livraison {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    color: #2e7d32;
+}
+
+.badge-count {
     background: white;
-    padding: 25px 30px;
+    border-radius: 50px;
+    padding: 2px 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.commande-card {
+    background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border-left: 4px solid #ffd900;
 }
 
-.commande.en-livraison {
-    background: #e8f5e9;
-    border: 2px solid #015a17;
+.commande-card.en-cours {
+    border-left-color: #00704b;
 }
 
-/* En-tête commande */
 .commande-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 10px;
 }
 
-.commande-header strong {
-    font-size: 16px;
-    color: #333;
-}
-
-.date {
-    display: block;
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-}
-
-/* Statuts */
-.statut {
-    padding: 6px 15px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-.statut-attente {
-    background: #ffd900;
-    color: #4d3d00;
-}
-
-.statut-livraison {
-    background: #d1fae5;
-    color: #015a17;
-}
-
-/* Informations client */
-.client-info {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-
-.client-info p {
-    padding: 4px 0;
-    font-size: 14px;
-}
-
-.client-info strong {
-    color: #015a17;
-}
-
-/* Produits */
-.commande-produits {
-    background: #f9fdf9;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-
-.commande-produits p {
-    padding: 4px 0;
-    font-size: 14px;
-}
-
-/* Footer commande */
-.commande-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.prix {
-    font-size: 22px;
+.commande-id {
+    font-size: 18px;
     font-weight: 700;
-    color: #015a17;
+    color: #014d14;
 }
 
-/* Boutons */
-.btn-action {
+.commande-heure {
+    font-size: 14px;
+    color: #6b7280;
+    background: #f0f0f0;
+    padding: 4px 10px;
+    border-radius: 50px;
+}
+
+.commande-client {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.commande-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px 0;
+}
+
+.commande-items li {
+    font-size: 13px;
+    color: #555;
+    padding: 4px 0;
+    border-bottom: 1px dashed #f0f0f0;
+}
+
+.commande-items li:last-child {
+    border-bottom: none;
+}
+
+.commande-adresse {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 14px;
+}
+
+.btn-statut {
+    width: 100%;
+    padding: 12px;
     border: none;
-    padding: 12px 25px;
-    border-radius: 20px;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
-    font-family: 'Poppins', sans-serif;
 }
 
-.btn-action:hover {
-    transform: scale(1.03);
-}
-
-.btn-preparer {
-    background-color: #ffd900;
+.btn-livraison {
+    background: #ffd900;
     color: #4d3d00;
 }
 
-.btn-livree {
-    background-color: #015a17;
-    color: white;
+.btn-livraison:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(255, 217, 0, 0.4);
 }
 
-/* FOOTER */
-footer {
-    padding: 40px;
-    background: rgba(255, 255, 255, 0.5);
-    margin-top: 50px;
-}
-
-footer p {
+.statut-label {
     text-align: center;
     font-size: 14px;
-    color: #666;
+    font-weight: 600;
+    color: #00704b;
+    padding: 10px;
+    background: #e8f5e9;
+    border-radius: 50px;
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
-    nav ul {
-        display: none;
-    }
-
-    .page-header h1 {
-        font-size: 36px;
-    }
-
-    .commande-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .commande-footer {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .btn-action {
-        width: 100%;
+    .commandes-container {
+        grid-template-columns: 1fr;
     }
 }
-
