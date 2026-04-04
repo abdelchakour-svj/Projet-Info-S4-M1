@@ -118,3 +118,25 @@ body {
     color: #666;
     text-decoration: underline;
 }
+
+/* Messages erreur / succès */
+.message {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.message.erreur {
+    background: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f5c6cb;
+}
+
+.message.succes {
+    background: #f0fff4;
+    color: #1e7e34;
+    border: 1px solid #c3e6cb;
+}

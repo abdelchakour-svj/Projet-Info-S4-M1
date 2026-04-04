@@ -1,5 +1,12 @@
 <?php
-// index.php — Page d'accueil dynamique
+/*
+ * index.php
+ *
+ * Page d'accueil du site L'Île au Fruit.
+ * Présente le concept du restaurant, une barre de recherche et les recettes de saison.
+ * La navigation est générée dynamiquement selon l'état de connexion de l'utilisateur.
+ */
+
 require_once 'includes/session.php';
 ?>
 <!DOCTYPE html>
@@ -39,20 +46,18 @@ require_once 'includes/session.php';
         <section class="concept">
             <h2>Notre concept</h2>
             <p>Un lieu frais et dépaysant pour savourer la nature.</p>
-            
+
             <div class="grille">
                 <div class="card c1">
                     <img src="image/c1.png" alt="Icône Fruits">
                     <h3>Produits ultra frais</h3>
                     <p>Fruits découpés chaque jour et ingrédients sélectionnés avec soin.</p>
                 </div>
-
                 <div class="card c2">
                     <img src="image/c2.png" alt="Icône Environnement">
                     <h3>Recettes gourmandes</h3>
-                    <p>Des recettes originales pour un plaisir gourmand et sain.</p>  
-                </div>    
-
+                    <p>Des recettes originales pour un plaisir gourmand et sain.</p>
+                </div>
                 <div class="card c3">
                     <img src="image/c3.png" alt="Icône Recette">
                     <h3>Ambiance tropicale</h3>
@@ -64,7 +69,7 @@ require_once 'includes/session.php';
         <section class="bottom">
             <h2>Recette de saison</h2>
             <p>Découvrez notre dessert de saison, une création fraîche et gourmande à base de fruits de saison.</p>
-            
+
             <div class="grille">
                 <div class="card c4">
                     <img src="image/image1.png" alt="Icône Recette de saison">
