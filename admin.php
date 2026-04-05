@@ -126,6 +126,7 @@ $nouveaux    = array_filter($clients, fn($u) => $u['date_inscription'] >= date('
                         <th>Statut fidélité</th>
                         <th>Remise</th>
                         <th>État</th>
+                        <th>Profil</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -171,6 +172,15 @@ $nouveaux    = array_filter($clients, fn($u) => $u['date_inscription'] >= date('
                         </td>
 
                         <td><?= $u['actif'] ? '✅ Actif' : '🔒 Bloqué' ?></td>
+
+                        <!-- Lien vers le profil -->
+                        <td>
+                            <?php if ($u['role'] === 'client'): ?>
+                                <a href="profil.php?user_id=<?= $u['id'] ?>" class="btn-voir" style="font-size:0.75rem; padding:3px 10px;">👤 Voir</a>
+                            <?php else: ?>
+                                <em style="color:#aaa;">—</em>
+                            <?php endif; ?>
+                        </td>
 
                         <!-- Bloquer / Activer -->
                         <td>

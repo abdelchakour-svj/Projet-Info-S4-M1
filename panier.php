@@ -29,32 +29,44 @@ require_once 'includes/data.php';
 verifier_connexion(['client']);
 
 if (!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
+if (!isset($_SESSION['panier_menus'])) $_SESSION['panier_menus'] = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action  = $_POST['action'];
     $plat_id = intval($_POST['plat_id'] ?? 0);
+    $menu_id = intval($_POST['menu_id'] ?? 0);
 
-    if ($_POST['action'] === 'supprimer') {
-        $_SESSION['panier'] = array_filter($_SESSION['panier'], fn($l) => $l['plat_id'] != $plat_id);
-        $_SESSION['panier'] = array_values($_SESSION['panier']);
+    if ($action === 'supprimer' && $plat_id) {
+        $_SESSION['panier'] = array_values(array_filter($_SESSION['panier'], fn($l) => $l['plat_id'] != $plat_id));
+    }
+    if ($action === 'supprimer_menu' && $menu_id) {
+        $_SESSION['panier_menus'] = array_values(array_filter($_SESSION['panier_menus'], fn($l) => $l['menu_id'] != $menu_id));
     }
 
-    if ($_POST['action'] === 'modifier') {
+    if ($action === 'modifier' && $plat_id) {
         $qte = intval($_POST['quantite'] ?? 1);
         if ($qte <= 0) {
-            $_SESSION['panier'] = array_filter($_SESSION['panier'], fn($l) => $l['plat_id'] != $plat_id);
-            $_SESSION['panier'] = array_values($_SESSION['panier']);
+            $_SESSION['panier'] = array_values(array_filter($_SESSION['panier'], fn($l) => $l['plat_id'] != $plat_id));
         } else {
             foreach ($_SESSION['panier'] as &$ligne) {
-                if ($ligne['plat_id'] == $plat_id) {
-                    $ligne['quantite'] = $qte;
-                    break;
-                }
+                if ($ligne['plat_id'] == $plat_id) { $ligne['quantite'] = $qte; break; }
+            }
+        }
+    }
+    if ($action === 'modifier_menu' && $menu_id) {
+        $qte = intval($_POST['quantite'] ?? 1);
+        if ($qte <= 0) {
+            $_SESSION['panier_menus'] = array_values(array_filter($_SESSION['panier_menus'], fn($l) => $l['menu_id'] != $menu_id));
+        } else {
+            foreach ($_SESSION['panier_menus'] as &$ligne) {
+                if ($ligne['menu_id'] == $menu_id) { $ligne['quantite'] = $qte; break; }
             }
         }
     }
 
-    if ($_POST['action'] === 'vider') {
+    if ($action === 'vider') {
         $_SESSION['panier'] = [];
+        $_SESSION['panier_menus'] = [];
     }
 
     header('Location: panier.php');
@@ -68,7 +80,15 @@ foreach ($_SESSION['panier'] as $ligne) {
     if ($plat) {
         $sous_total = $plat['prix'] * $ligne['quantite'];
         $total += $sous_total;
-        $lignes[] = ['plat' => $plat, 'quantite' => $ligne['quantite'], 'sous_total' => $sous_total];
+        $lignes[] = ['type' => 'plat', 'item' => $plat, 'quantite' => $ligne['quantite'], 'sous_total' => $sous_total];
+    }
+}
+foreach ($_SESSION['panier_menus'] as $ligne) {
+    $menu = trouver_menu_par_id($ligne['menu_id']);
+    if ($menu) {
+        $sous_total = $menu['prix_total'] * $ligne['quantite'];
+        $total += $sous_total;
+        $lignes[] = ['type' => 'menu', 'item' => $menu, 'quantite' => $ligne['quantite'], 'sous_total' => $sous_total];
     }
 }
 
@@ -111,14 +131,24 @@ $total_apres_remise = $remise > 0 ? $total * (1 - $remise / 100) : $total;
                 <?php foreach ($lignes as $l): ?>
                 <div style="display:flex; justify-content:space-between; align-items:center; background:white; border-radius:12px; padding:1rem 1.5rem; margin-bottom:0.8rem; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
                     <div style="flex:1;">
-                        <strong><?= htmlspecialchars($l['plat']['nom']) ?></strong>
-                        <div style="color:#777; font-size:0.85rem;"><?= number_format($l['plat']['prix'], 2, ',', ' ') ?> € / unité</div>
+                        <strong><?= htmlspecialchars($l['item']['nom']) ?></strong>
+                        <?php if ($l['type'] === 'menu'): ?>
+                            <span style="background:#eef5f0; color:#014d14; border-radius:4px; font-size:0.72rem; padding:1px 6px; margin-left:6px;">Menu</span>
+                        <?php endif; ?>
+                        <div style="color:#777; font-size:0.85rem;">
+                            <?= number_format($l['type'] === 'menu' ? $l['item']['prix_total'] : $l['item']['prix'], 2, ',', ' ') ?> € / unité
+                        </div>
                     </div>
 
                     <!-- Modifier quantité -->
                     <form method="POST" action="panier.php" style="display:flex; align-items:center; gap:6px; margin:0 1rem;">
-                        <input type="hidden" name="action" value="modifier">
-                        <input type="hidden" name="plat_id" value="<?= $l['plat']['id'] ?>">
+                        <?php if ($l['type'] === 'menu'): ?>
+                            <input type="hidden" name="action" value="modifier_menu">
+                            <input type="hidden" name="menu_id" value="<?= $l['item']['id'] ?>">
+                        <?php else: ?>
+                            <input type="hidden" name="action" value="modifier">
+                            <input type="hidden" name="plat_id" value="<?= $l['item']['id'] ?>">
+                        <?php endif; ?>
                         <input type="number" name="quantite" value="<?= $l['quantite'] ?>" min="1" max="20"
                                style="width:55px; padding:4px; border:1px solid #ddd; border-radius:6px; text-align:center;">
                         <button type="submit" class="btn-voir" style="font-size:0.75rem; padding:4px 10px;">OK</button>
@@ -128,8 +158,13 @@ $total_apres_remise = $remise > 0 ? $total * (1 - $remise / 100) : $total;
 
                     <!-- Supprimer -->
                     <form method="POST" action="panier.php" style="margin-left:0.8rem;">
-                        <input type="hidden" name="action" value="supprimer">
-                        <input type="hidden" name="plat_id" value="<?= $l['plat']['id'] ?>">
+                        <?php if ($l['type'] === 'menu'): ?>
+                            <input type="hidden" name="action" value="supprimer_menu">
+                            <input type="hidden" name="menu_id" value="<?= $l['item']['id'] ?>">
+                        <?php else: ?>
+                            <input type="hidden" name="action" value="supprimer">
+                            <input type="hidden" name="plat_id" value="<?= $l['item']['id'] ?>">
+                        <?php endif; ?>
                         <button type="submit" style="background:none; border:none; color:#dc3545; cursor:pointer; font-size:1.2rem;">✕</button>
                     </form>
                 </div>

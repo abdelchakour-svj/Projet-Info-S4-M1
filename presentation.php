@@ -26,24 +26,42 @@
 require_once 'includes/session.php';
 require_once 'includes/data.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['plat_id']) && est_connecte() && get_role() === 'client') {
-    $plat_id = intval($_POST['plat_id']);
-    if (!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
-
-    $trouve = false;
-    foreach ($_SESSION['panier'] as &$ligne) {
-        if ($ligne['plat_id'] == $plat_id) {
-            $ligne['quantite']++;
-            $trouve = true;
-            break;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && est_connecte() && get_role() === 'client') {
+    if (isset($_POST['plat_id'])) {
+        $plat_id = intval($_POST['plat_id']);
+        if (!isset($_SESSION['panier'])) $_SESSION['panier'] = [];
+        $trouve = false;
+        foreach ($_SESSION['panier'] as &$ligne) {
+            if (isset($ligne['plat_id']) && $ligne['plat_id'] == $plat_id) {
+                $ligne['quantite']++;
+                $trouve = true;
+                break;
+            }
         }
-    }
-    if (!$trouve) {
-        $_SESSION['panier'][] = ['plat_id' => $plat_id, 'quantite' => 1];
+        if (!$trouve) {
+            $_SESSION['panier'][] = ['plat_id' => $plat_id, 'quantite' => 1];
+        }
+    } elseif (isset($_POST['menu_id'])) {
+        $menu_id = intval($_POST['menu_id']);
+        if (!isset($_SESSION['panier_menus'])) $_SESSION['panier_menus'] = [];
+        $trouve = false;
+        foreach ($_SESSION['panier_menus'] as &$ligne) {
+            if ($ligne['menu_id'] == $menu_id) {
+                $ligne['quantite']++;
+                $trouve = true;
+                break;
+            }
+        }
+        if (!$trouve) {
+            $_SESSION['panier_menus'][] = ['menu_id' => $menu_id, 'quantite' => 1];
+        }
     }
     header('Location: presentation.php?' . http_build_query($_GET));
     exit;
 }
+
+$menus = lire_json('menus.json');
+$menus = array_filter($menus, fn($m) => $m['disponible']);
 
 $plats = lire_json('plats.json');
 $plats = array_filter($plats, fn($p) => $p['disponible']);
@@ -75,6 +93,9 @@ if ($recherche !== '') {
 $nb_panier = 0;
 if (isset($_SESSION['panier'])) {
     foreach ($_SESSION['panier'] as $l) $nb_panier += $l['quantite'];
+}
+if (isset($_SESSION['panier_menus'])) {
+    foreach ($_SESSION['panier_menus'] as $l) $nb_panier += $l['quantite'];
 }
 
 $labels_tags = [
@@ -159,7 +180,51 @@ $labels_tags = [
             </form>
         </section>
 
+        <!-- Section Menus configurés -->
         <section class="products-section">
+            <h2 style="text-align:center; color:var(--green-dark); margin-bottom:1.5rem; font-size:1.6rem;">🍽️ Nos Menus</h2>
+            <div class="product-grid">
+                <?php foreach ($menus as $menu): ?>
+                <div class="product-card">
+                    <div class="product-info" style="padding:1.5rem;">
+                        <h3><?= htmlspecialchars($menu['nom']) ?></h3>
+                        <p class="product-description"><?= htmlspecialchars($menu['description']) ?></p>
+                        <p style="font-size:0.82rem; color:#888; margin:0.4rem 0;">
+                            🕐 <?= htmlspecialchars($menu['creneaux']) ?>
+                            &nbsp;|&nbsp; 👥 <?= $menu['nb_personnes'] ?> pers.
+                        </p>
+                        <div style="margin-top:0.6rem;">
+                            <?php foreach ($menu['plats_ids'] as $pid): ?>
+                                <?php $p = trouver_plat_par_id($pid); ?>
+                                <?php if ($p): ?>
+                                    <span style="display:inline-block; background:#eef5f0; color:#014d14; border-radius:6px; padding:2px 8px; font-size:0.78rem; margin:2px;">
+                                        <?= htmlspecialchars($p['nom']) ?>
+                                    </span>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="product-footer" style="margin-top:1rem;">
+                            <span class="price"><?= number_format($menu['prix_total'], 2, ',', ' ') ?> €</span>
+                            <?php if (est_connecte() && get_role() === 'client'): ?>
+                                <form method="POST" action="presentation.php?<?= htmlspecialchars(http_build_query($_GET)) ?>" style="display:inline;">
+                                    <input type="hidden" name="menu_id" value="<?= $menu['id'] ?>">
+                                    <button type="submit" class="btn-add">+ Ajouter</button>
+                                </form>
+                            <?php else: ?>
+                                <a href="connexion.php" class="btn-add">Se connecter</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
+        <hr style="border:none; border-top:2px solid #eef5f0; margin:2rem 1rem;">
+
+        <!-- Section Plats à la carte -->
+        <section class="products-section">
+            <h2 style="text-align:center; color:var(--green-dark); margin-bottom:1.5rem; font-size:1.6rem;">🥗 Plats à la carte</h2>
             <?php if (empty($plats)): ?>
                 <p style="text-align:center; padding:3rem; color:#888;">Aucun produit trouvé pour ces filtres.</p>
             <?php else: ?>
@@ -196,6 +261,7 @@ $labels_tags = [
             </div>
             <?php endif; ?>
         </section>
+        <!-- Fin section plats à la carte -->
 
         <?php if (est_connecte() && get_role() === 'client' && $nb_panier > 0): ?>
         <div style="text-align:center; padding:2rem;">

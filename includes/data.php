@@ -114,11 +114,24 @@ function trouver_plat_par_id($id) {
     return false;
 }
 
+function trouver_menu_par_id($id) {
+    $menus = lire_json('menus.json');
+    foreach ($menus as $m) {
+        if ($m['id'] == $id) return $m;
+    }
+    return false;
+}
+
 function noms_articles($articles) {
     $noms = [];
     foreach ($articles as $article) {
-        $plat = trouver_plat_par_id($article['plat_id']);
-        if ($plat) $noms[] = $plat['nom'] . ' x' . $article['quantite'];
+        if (isset($article['menu_id'])) {
+            $menu = trouver_menu_par_id($article['menu_id']);
+            if ($menu) $noms[] = $menu['nom'] . ' x' . $article['quantite'];
+        } else {
+            $plat = trouver_plat_par_id($article['plat_id']);
+            if ($plat) $noms[] = $plat['nom'] . ' x' . $article['quantite'];
+        }
     }
     return implode(', ', $noms);
 }

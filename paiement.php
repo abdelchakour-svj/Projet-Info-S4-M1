@@ -32,15 +32,17 @@ require_once 'includes/cybank.php';
 
 verifier_connexion(['client']);
 
-if (empty($_SESSION['panier'])) {
+if (empty($_SESSION['panier']) && empty($_SESSION['panier_menus'])) {
     header('Location: panier.php');
     exit;
 }
 
+if (!isset($_SESSION['panier_menus'])) $_SESSION['panier_menus'] = [];
+
 $user  = trouver_utilisateur_par_id($_SESSION['user_id']);
 $remise = intval($user['remise'] ?? 0);
 
-// Calculer le total
+// Calculer le total (plats + menus)
 $total = 0;
 $lignes = [];
 foreach ($_SESSION['panier'] as $ligne) {
@@ -48,7 +50,15 @@ foreach ($_SESSION['panier'] as $ligne) {
     if ($plat) {
         $sous_total = $plat['prix'] * $ligne['quantite'];
         $total += $sous_total;
-        $lignes[] = ['plat' => $plat, 'quantite' => $ligne['quantite'], 'sous_total' => $sous_total];
+        $lignes[] = ['type' => 'plat', 'item' => $plat, 'quantite' => $ligne['quantite'], 'sous_total' => $sous_total];
+    }
+}
+foreach ($_SESSION['panier_menus'] as $ligne) {
+    $menu = trouver_menu_par_id($ligne['menu_id']);
+    if ($menu) {
+        $sous_total = $menu['prix_total'] * $ligne['quantite'];
+        $total += $sous_total;
+        $lignes[] = ['type' => 'menu', 'item' => $menu, 'quantite' => $ligne['quantite'], 'sous_total' => $sous_total];
     }
 }
 $total_apres_remise = $remise > 0 ? $total * (1 - $remise / 100) : $total;
@@ -81,7 +91,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $date_souhaitee  = null;
         }
 
-        $articles = array_map(fn($l) => ['plat_id' => $l['plat']['id'], 'quantite' => $l['quantite']], $lignes);
+        $articles = array_map(function($l) {
+            if ($l['type'] === 'menu') {
+                return ['menu_id' => $l['item']['id'], 'quantite' => $l['quantite']];
+            }
+            return ['plat_id' => $l['item']['id'], 'quantite' => $l['quantite']];
+        }, $lignes);
 
         $nouvelle_commande = [
             'client_id'        => $_SESSION['user_id'],
@@ -109,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         $_SESSION['panier'] = [];
+        $_SESSION['panier_menus'] = [];
         $succes = true;
     }
 }
@@ -159,7 +175,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2 style="margin:0 0 1rem;">📋 Récapitulatif</h2>
                 <?php foreach ($lignes as $l): ?>
                 <div style="display:flex; justify-content:space-between; padding:0.4rem 0; border-bottom:1px solid #f5f5f5; font-size:0.95rem;">
-                    <span><?= htmlspecialchars($l['plat']['nom']) ?> × <?= $l['quantite'] ?></span>
+                    <span>
+                        <?= htmlspecialchars($l['item']['nom']) ?> × <?= $l['quantite'] ?>
+                        <?php if ($l['type'] === 'menu'): ?>
+                            <span style="background:#eef5f0; color:#014d14; border-radius:4px; font-size:0.72rem; padding:1px 6px; margin-left:4px;">Menu</span>
+                        <?php endif; ?>
+                    </span>
                     <span><?= number_format($l['sous_total'], 2, ',', ' ') ?> €</span>
                 </div>
                 <?php endforeach; ?>

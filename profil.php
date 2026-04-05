@@ -23,12 +23,29 @@
 require_once 'includes/session.php';
 require_once 'includes/data.php';
 
-verifier_connexion(['client']);
+verifier_connexion(['client', 'admin']);
 
 $message = '';
 $erreur  = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'modifier_profil') {
+// Détermine l'utilisateur à afficher
+// - admin avec ?user_id=X → affiche le profil du client X (lecture seule)
+// - client → affiche son propre profil (éditable)
+$role_connecte = get_role();
+$vue_admin = false;
+
+if ($role_connecte === 'admin') {
+    $user_id_cible = intval($_GET['user_id'] ?? 0);
+    if ($user_id_cible <= 0) {
+        header('Location: admin.php');
+        exit;
+    }
+    $vue_admin = true;
+} else {
+    $user_id_cible = $_SESSION['user_id'];
+}
+
+if (!$vue_admin && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'modifier_profil') {
     $telephone      = trim($_POST['telephone'] ?? '');
     $adresse        = trim($_POST['adresse'] ?? '');
     $code_interphone = trim($_POST['code_interphone'] ?? '');
@@ -37,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (empty($telephone) || empty($adresse)) {
         $erreur = 'Le téléphone et l\'adresse sont obligatoires.';
     } else {
-        mettre_a_jour_utilisateur($_SESSION['user_id'], [
+        mettre_a_jour_utilisateur($user_id_cible, [
             'telephone'       => $telephone,
             'adresse'         => $adresse,
             'code_interphone' => $code_interphone,
@@ -47,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-$user = trouver_utilisateur_par_id($_SESSION['user_id']);
-$commandes = commandes_du_client($_SESSION['user_id']);
+$user = trouver_utilisateur_par_id($user_id_cible);
+$commandes = commandes_du_client($user_id_cible);
 
 $initiales = strtoupper(substr($user['prenom'], 0, 1) . substr($user['nom'], 0, 1));
 
@@ -76,6 +93,13 @@ $mode_edition = isset($_GET['edit']);
     </header>
 
     <main>
+        <?php if ($vue_admin): ?>
+        <div style="background:#fff3cd; color:#856404; padding:0.8rem 1.5rem; text-align:center; font-size:0.9rem;">
+            👁️ Vue administrateur — profil de <strong><?= htmlspecialchars($user['prenom'] . ' ' . $user['nom']) ?></strong>
+            &nbsp;|&nbsp; <a href="admin.php" style="color:#856404; font-weight:600;">← Retour à l'administration</a>
+        </div>
+        <?php endif; ?>
+
         <section class="profil-header">
             <div class="avatar"><?= $initiales ?></div>
             <div>
@@ -101,12 +125,12 @@ $mode_edition = isset($_GET['edit']);
             <section class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                     <h2>📋 Mes informations</h2>
-                    <?php if (!$mode_edition): ?>
+                    <?php if (!$mode_edition && !$vue_admin): ?>
                         <a href="profil.php?edit=1" class="btn-voir" style="font-size:0.85rem;">✏️ Modifier</a>
                     <?php endif; ?>
                 </div>
 
-                <?php if ($mode_edition): ?>
+                <?php if ($mode_edition && !$vue_admin): ?>
                 <!-- Formulaire d'édition -->
                 <form method="POST" action="profil.php">
                     <input type="hidden" name="action" value="modifier_profil">
@@ -188,10 +212,15 @@ $mode_edition = isset($_GET['edit']);
             <section class="card">
                 <h2>💎 Compte fidélité</h2>
 
+                <?php
+                    $progress  = min($points, 300) / 300;
+                    $dashoffset = round(339.3 * (1 - $progress), 2);
+                ?>
                 <div class="cercle-container">
                     <svg class="cercle-svg" viewBox="0 0 120 120">
                         <circle class="cercle-fond" cx="60" cy="60" r="54"/>
-                        <circle class="cercle-progression" cx="60" cy="60" r="54"/>
+                        <circle class="cercle-progression" cx="60" cy="60" r="54"
+                                style="stroke-dashoffset: <?= $dashoffset ?>"/>
                     </svg>
                     <div class="cercle-texte">
                         <div class="points"><?= $points ?></div>
