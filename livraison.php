@@ -1,7 +1,7 @@
 <?php
 // Page du livreur
 // Accessible seulement au rôle 'livreur'
-// Affiche la commande en cours assignée et permet de la marquer comme livrée
+// Phase 3 : bouton "Livraison terminée" et bouton "Livraison abandonnée"
 
 require_once 'includes/session.php';
 require_once 'includes/data.php';
@@ -11,18 +11,23 @@ verifier_connexion(['livreur']);
 $livreur_id = $_SESSION['user_id'];
 $message = '';
 
-// Si le livreur clique sur "Livraison terminée"
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['action'] === 'livree') {
+// Traitement des actions du livreur
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['commande_id'])) {
     $commande_id = intval($_POST['commande_id']);
-    mettre_a_jour_commande($commande_id, ['statut' => 'livree']);
-    $message = 'Commande #' . $commande_id . ' marquée comme livrée !';
+    $action      = $_POST['action'];
+
+    if ($action === 'livree') {
+        mettre_a_jour_commande($commande_id, ['statut' => 'livree']);
+        $message = '✅ Commande #' . $commande_id . ' marquée comme livrée !';
+    } elseif ($action === 'abandonnee') {
+        mettre_a_jour_commande($commande_id, ['statut' => 'abandonnee']);
+        $message = '❌ Commande #' . $commande_id . ' marquée comme abandonnée.';
+    }
 }
 
-// On cherche la commande en cours assignée à ce livreur
+// Chercher la commande en cours assignée à ce livreur
 $commande_en_cours = null;
-$commandes = lire_json('commandes.json');
-
-foreach ($commandes as $c) {
+foreach (lire_json('commandes.json') as $c) {
     if ($c['livreur_id'] == $livreur_id && $c['statut'] === 'en_livraison') {
         $commande_en_cours = $c;
         break;
@@ -49,8 +54,8 @@ foreach ($commandes as $c) {
     <main>
 
         <?php if ($message): ?>
-            <p style="background:#d4edda; color:#155724; padding:1rem; margin:1rem; border-radius:8px; text-align:center;">
-                ✅ <?= $message ?>
+            <p style="background:#d4edda; color:#155724; padding:1rem; margin:1rem; border-radius:8px; text-align:center; font-weight:600;">
+                <?= htmlspecialchars($message) ?>
             </p>
         <?php endif; ?>
 
@@ -105,12 +110,23 @@ foreach ($commandes as $c) {
                 <a href="https://www.google.com/maps/search/?api=1&query=<?= $adresse_url ?>" class="btn-maps" target="_blank">📍 Ouvrir dans Maps</a>
                 <a href="https://waze.com/ul?q=<?= $adresse_url ?>" class="btn-waze" target="_blank">🚗 Ouvrir dans Waze</a>
 
+                <!-- Bouton : Livraison terminée -->
                 <form method="POST" action="livraison.php" style="display:inline;">
                     <input type="hidden" name="action" value="livree">
                     <input type="hidden" name="commande_id" value="<?= $commande_en_cours['id'] ?>">
                     <button type="submit" class="btn-livree"
                         onclick="return confirm('Confirmer la livraison ?')">
                         ✅ Livraison terminée
+                    </button>
+                </form>
+
+                <!-- Bouton : Livraison abandonnée -->
+                <form method="POST" action="livraison.php" style="display:inline;">
+                    <input type="hidden" name="action" value="abandonnee">
+                    <input type="hidden" name="commande_id" value="<?= $commande_en_cours['id'] ?>">
+                    <button type="submit" class="btn-abandonnee"
+                        onclick="return confirm('Marquer cette livraison comme abandonnée (adresse introuvable) ?')">
+                        ❌ Livraison abandonnée
                     </button>
                 </form>
             </section>

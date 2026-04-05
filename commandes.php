@@ -1,28 +1,36 @@
 <?php
 // Page de gestion des commandes (restaurateur et admin)
 // Affiche les commandes à préparer et en livraison
-// Permet de passer une commande en statut "en_livraison"
+// Phase 3 : sélection réelle du livreur via dropdown
 
 require_once 'includes/session.php';
 require_once 'includes/data.php';
 
 verifier_connexion(['restaurateur', 'admin']);
 
-// Si le restaurateur clique sur "Passer en livraison"
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['commande_id'])) {
-    $id = intval($_POST['commande_id']);
-    mettre_a_jour_commande($id, ['statut' => 'en_livraison', 'livreur_id' => 9]); // livreur par défaut
-    header('Location: commandes.php');
-    exit;
+$message = '';
+
+// Passer une commande en livraison avec sélection du livreur
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['commande_id'], $_POST['livreur_id'])) {
+    $id         = intval($_POST['commande_id']);
+    $livreur_id = intval($_POST['livreur_id']);
+    if ($id > 0 && $livreur_id > 0) {
+        mettre_a_jour_commande($id, ['statut' => 'en_livraison', 'livreur_id' => $livreur_id]);
+        $message = 'Commande #' . $id . ' passée en livraison.';
+    }
 }
 
-// On charge toutes les commandes et on les sépare par statut
-$toutes = lire_json('commandes.json');
+// Charger les livreurs disponibles (rôle livreur + compte actif)
+$tous_utilisateurs = lire_json('utilisateurs.json');
+$livreurs = array_filter($tous_utilisateurs, fn($u) => $u['role'] === 'livreur' && $u['actif']);
+
+// Charger les commandes et les trier par statut
+$toutes      = lire_json('commandes.json');
 $a_preparer  = [];
 $en_livraison = [];
 
 foreach ($toutes as $c) {
-    if ($c['statut'] === 'a_preparer')   $a_preparer[]  = $c;
+    if ($c['statut'] === 'a_preparer')   $a_preparer[]   = $c;
     if ($c['statut'] === 'en_livraison') $en_livraison[] = $c;
 }
 ?>
@@ -48,6 +56,12 @@ foreach ($toutes as $c) {
             <h1>Commandes</h1>
             <h3>Gestion des commandes en cours</h3>
         </section>
+
+        <?php if ($message): ?>
+            <p style="background:#d4edda; color:#155724; padding:0.8rem 1.5rem; margin:1rem; border-radius:8px; text-align:center;">
+                ✅ <?= htmlspecialchars($message) ?>
+            </p>
+        <?php endif; ?>
 
         <div class="commandes-container">
 
@@ -82,6 +96,15 @@ foreach ($toutes as $c) {
 
                         <form method="POST" action="commandes.php">
                             <input type="hidden" name="commande_id" value="<?= $c['id'] ?>">
+                            <div style="margin:0.5rem 0;">
+                                <label style="font-size:0.85rem; color:#555;">Livreur :</label>
+                                <select name="livreur_id" style="width:100%; margin-top:4px; padding:6px; border-radius:6px; border:1px solid #ddd;" required>
+                                    <option value="">-- Choisir un livreur --</option>
+                                    <?php foreach ($livreurs as $l): ?>
+                                        <option value="<?= $l['id'] ?>"><?= htmlspecialchars($l['prenom'] . ' ' . $l['nom']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                             <button type="submit" class="btn-statut btn-livraison">🚴 Passer en livraison</button>
                         </form>
                     </div>
@@ -99,8 +122,9 @@ foreach ($toutes as $c) {
                 <?php endif; ?>
 
                 <?php foreach ($en_livraison as $c):
-                    $client = trouver_utilisateur_par_id($c['client_id']);
-                    $heure  = date('H:i', strtotime($c['date']));
+                    $client  = trouver_utilisateur_par_id($c['client_id']);
+                    $livreur = trouver_utilisateur_par_id($c['livreur_id']);
+                    $heure   = date('H:i', strtotime($c['date']));
                 ?>
                     <div class="commande-card en-cours">
                         <div class="commande-header">
@@ -116,6 +140,9 @@ foreach ($toutes as $c) {
                             <?php endforeach; ?>
                         </ul>
                         <div class="commande-adresse">📍 <?= htmlspecialchars($c['adresse_livraison']) ?></div>
+                        <?php if ($livreur): ?>
+                            <div style="font-size:0.85rem; color:#555; margin-top:4px;">🚴 <?= htmlspecialchars($livreur['prenom'] . ' ' . $livreur['nom']) ?></div>
+                        <?php endif; ?>
                         <div class="statut-label">🚴 En cours de livraison...</div>
                     </div>
                 <?php endforeach; ?>

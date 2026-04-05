@@ -1,24 +1,49 @@
 <?php
 // Page profil du client connecté
-// Affiche ses informations personnelles, son niveau de fidélité et son historique de commandes
+// Affiche ses informations personnelles avec possibilité de les modifier
+// Modification via formulaire POST (phase 3)
 
 require_once 'includes/session.php';
 require_once 'includes/data.php';
 
 verifier_connexion(['client']);
 
+$message = '';
+$erreur  = '';
+
+// Traitement du formulaire de modification
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'modifier_profil') {
+    $telephone      = trim($_POST['telephone'] ?? '');
+    $adresse        = trim($_POST['adresse'] ?? '');
+    $code_interphone = trim($_POST['code_interphone'] ?? '');
+    $etage          = trim($_POST['etage'] ?? '');
+
+    if (empty($telephone) || empty($adresse)) {
+        $erreur = 'Le téléphone et l\'adresse sont obligatoires.';
+    } else {
+        mettre_a_jour_utilisateur($_SESSION['user_id'], [
+            'telephone'       => $telephone,
+            'adresse'         => $adresse,
+            'code_interphone' => $code_interphone,
+            'etage'           => $etage,
+        ]);
+        $message = 'Vos informations ont bien été mises à jour.';
+    }
+}
+
 $user = trouver_utilisateur_par_id($_SESSION['user_id']);
 $commandes = commandes_du_client($_SESSION['user_id']);
 
-// On récupère les initiales pour l'avatar
 $initiales = strtoupper(substr($user['prenom'], 0, 1) . substr($user['nom'], 0, 1));
 
-// Calcul du niveau de fidélité selon les points
 $points = $user['points_fidelite'];
 if ($points >= 300)      $niveau = '💎 Platine';
 elseif ($points >= 200)  $niveau = '🥇 Gold';
 elseif ($points >= 100)  $niveau = '🥈 Argent';
 else                     $niveau = '🥉 Bronze';
+
+// Mode édition : on affiche le formulaire si ?edit=1
+$mode_edition = isset($_GET['edit']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -45,11 +70,83 @@ else                     $niveau = '🥉 Bronze';
             </div>
         </section>
 
+        <?php if ($message): ?>
+            <p style="background:#d4edda; color:#155724; padding:1rem; margin:1rem auto; max-width:800px; border-radius:8px; text-align:center;">
+                ✅ <?= htmlspecialchars($message) ?>
+            </p>
+        <?php endif; ?>
+        <?php if ($erreur): ?>
+            <p style="background:#f8d7da; color:#721c24; padding:1rem; margin:1rem auto; max-width:800px; border-radius:8px; text-align:center;">
+                ⚠️ <?= htmlspecialchars($erreur) ?>
+            </p>
+        <?php endif; ?>
+
         <div class="profil-grid">
 
             <section class="card">
-                <h2>📋 Mes informations</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h2>📋 Mes informations</h2>
+                    <?php if (!$mode_edition): ?>
+                        <a href="profil.php?edit=1" class="btn-voir" style="font-size:0.85rem;">✏️ Modifier</a>
+                    <?php endif; ?>
+                </div>
 
+                <?php if ($mode_edition): ?>
+                <!-- Formulaire d'édition -->
+                <form method="POST" action="profil.php">
+                    <input type="hidden" name="action" value="modifier_profil">
+
+                    <div class="info-ligne">
+                        <span>📧 Email</span>
+                        <div><span><?= htmlspecialchars($user['login']) ?></span>
+                            <small style="color:#aaa;">(non modifiable)</small>
+                        </div>
+                    </div>
+
+                    <div class="info-ligne">
+                        <label for="telephone">📱 Téléphone</label>
+                        <div>
+                            <input type="tel" id="telephone" name="telephone"
+                                   value="<?= htmlspecialchars($user['telephone']) ?>"
+                                   class="input-edit" required>
+                        </div>
+                    </div>
+
+                    <div class="info-ligne">
+                        <label for="adresse">📍 Adresse</label>
+                        <div>
+                            <input type="text" id="adresse" name="adresse"
+                                   value="<?= htmlspecialchars($user['adresse']) ?>"
+                                   class="input-edit" required>
+                        </div>
+                    </div>
+
+                    <div class="info-ligne">
+                        <label for="code_interphone">🔔 Code interphone</label>
+                        <div>
+                            <input type="text" id="code_interphone" name="code_interphone"
+                                   value="<?= htmlspecialchars($user['code_interphone']) ?>"
+                                   class="input-edit">
+                        </div>
+                    </div>
+
+                    <div class="info-ligne">
+                        <label for="etage">🏢 Étage</label>
+                        <div>
+                            <input type="text" id="etage" name="etage"
+                                   value="<?= htmlspecialchars($user['etage']) ?>"
+                                   class="input-edit">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button type="submit" class="btn-voir">💾 Enregistrer</button>
+                        <a href="profil.php" class="btn-voir" style="background:#aaa;">Annuler</a>
+                    </div>
+                </form>
+
+                <?php else: ?>
+                <!-- Affichage normal -->
                 <div class="info-ligne">
                     <span>📧 Email</span>
                     <div><span><?= htmlspecialchars($user['login']) ?></span></div>
@@ -70,6 +167,7 @@ else                     $niveau = '🥉 Bronze';
                     <span>🏢 Étage</span>
                     <div><span><?= htmlspecialchars($user['etage']) ?: 'Non précisé' ?></span></div>
                 </div>
+                <?php endif; ?>
             </section>
 
             <section class="card">
@@ -118,8 +216,13 @@ else                     $niveau = '🥉 Bronze';
                                 <span class="commande-prix"><?= number_format($c['total'], 2, ',', ' ') ?> €</span>
                                 <?php if ($c['statut'] === 'livree'): ?>
                                     <span class="commande-statut livree">✅ Livrée</span>
+                                    <?php if (empty($c['avis'])): ?>
+                                        <a href="avis.php" class="btn-voir" style="font-size:0.8rem;">⭐ Noter</a>
+                                    <?php endif; ?>
                                 <?php elseif ($c['statut'] === 'en_livraison'): ?>
                                     <span class="commande-statut en-cours">🚴 En livraison</span>
+                                <?php elseif ($c['statut'] === 'abandonnee'): ?>
+                                    <span class="commande-statut" style="color:#dc3545;">❌ Abandonnée</span>
                                 <?php else: ?>
                                     <span class="commande-statut">🍽️ En préparation</span>
                                 <?php endif; ?>

@@ -1,40 +1,58 @@
 <?php
 // Page d'administration
 // Accessible uniquement au rôle 'admin'
-// Affiche la liste de tous les utilisateurs avec possibilité de les bloquer/débloquer
+// Gestion des utilisateurs : bloquer/activer, changer le statut fidélité, définir une remise
 
 require_once 'includes/session.php';
 require_once 'includes/data.php';
 
 verifier_connexion(['admin']);
 
-// Si l'admin clique sur "Bloquer" ou "Activer" un utilisateur
+$message = '';
+
+// Bloquer / activer un compte
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_user_id'])) {
-    $id = intval($_POST['toggle_user_id']);
+    $id   = intval($_POST['toggle_user_id']);
     $user = trouver_utilisateur_par_id($id);
-    if ($user) {
-        // On inverse le champ actif (true → false, false → true)
+    if ($user && $id !== $_SESSION['user_id']) {
         mettre_a_jour_utilisateur($id, ['actif' => !$user['actif']]);
+        $message = $user['actif'] ? 'Compte bloqué.' : 'Compte activé.';
     }
-    header('Location: admin.php');
-    exit;
+}
+
+// Changer le statut fidélité
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['statut_user_id'])) {
+    $id     = intval($_POST['statut_user_id']);
+    $statut = $_POST['nouveau_statut'] ?? '';
+    $statuts_valides = ['bronze', 'argent', 'gold', 'platine', 'vip', 'premium'];
+    if ($id !== $_SESSION['user_id'] && in_array($statut, $statuts_valides)) {
+        mettre_a_jour_utilisateur($id, ['statut' => $statut]);
+        $message = 'Statut mis à jour.';
+    }
+}
+
+// Définir une remise (en %)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remise_user_id'])) {
+    $id     = intval($_POST['remise_user_id']);
+    $remise = max(0, min(100, intval($_POST['remise'] ?? 0)));
+    if ($id !== $_SESSION['user_id']) {
+        mettre_a_jour_utilisateur($id, ['remise' => $remise]);
+        $message = 'Remise de ' . $remise . '% appliquée.';
+    }
 }
 
 $utilisateurs = lire_json('utilisateurs.json');
 $commandes    = lire_json('commandes.json');
 
-// On compte le nombre de commandes par client
 $nb_commandes_par_client = [];
 foreach ($commandes as $c) {
     $cid = $c['client_id'];
-    if (!isset($nb_commandes_par_client[$cid])) $nb_commandes_par_client[$cid] = 0;
-    $nb_commandes_par_client[$cid]++;
+    $nb_commandes_par_client[$cid] = ($nb_commandes_par_client[$cid] ?? 0) + 1;
 }
 
-// Stats globales
-$total_users   = count($utilisateurs);
-$clients       = array_filter($utilisateurs, fn($u) => $u['role'] === 'client');
-$nouveaux      = array_filter($clients, fn($u) => $u['date_inscription'] >= date('Y-m-01'));
+$total_users = count($utilisateurs);
+$clients     = array_filter($utilisateurs, fn($u) => $u['role'] === 'client');
+$nouveaux    = array_filter($clients, fn($u) => $u['date_inscription'] >= date('Y-m-01'));
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -58,6 +76,12 @@ $nouveaux      = array_filter($clients, fn($u) => $u['date_inscription'] >= date
             <h1>Administration</h1>
             <h3>Gestion des utilisateurs</h3>
         </section>
+
+        <?php if ($message): ?>
+            <p style="background:#d4edda; color:#155724; padding:0.8rem 1.5rem; margin:1rem auto; max-width:900px; border-radius:8px; text-align:center;">
+                ✅ <?= htmlspecialchars($message) ?>
+            </p>
+        <?php endif; ?>
 
         <section class="stats-section">
             <div class="stats-grid">
@@ -83,10 +107,11 @@ $nouveaux      = array_filter($clients, fn($u) => $u['date_inscription'] >= date
                         <th>Nom</th>
                         <th>Email</th>
                         <th>Rôle</th>
-                        <th>Téléphone</th>
                         <th>Commandes</th>
-                        <th>Statut</th>
-                        <th>Action</th>
+                        <th>Statut fidélité</th>
+                        <th>Remise</th>
+                        <th>État</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,11 +120,46 @@ $nouveaux      = array_filter($clients, fn($u) => $u['date_inscription'] >= date
                         <td><?= htmlspecialchars($u['prenom'] . ' ' . $u['nom']) ?></td>
                         <td><?= htmlspecialchars($u['login']) ?></td>
                         <td><?= htmlspecialchars($u['role']) ?></td>
-                        <td><?= htmlspecialchars($u['telephone']) ?></td>
                         <td><?= $nb_commandes_par_client[$u['id']] ?? 0 ?></td>
-                        <td><?= $u['actif'] ? '✅ Actif' : '🔒 Bloqué' ?></td>
+
+                        <!-- Statut fidélité (modifiable pour les clients) -->
                         <td>
-                            <?php if ($u['id'] != $_SESSION['user_id']): // on ne peut pas se bloquer soi-même ?>
+                            <?php if ($u['role'] === 'client' && $u['id'] != $_SESSION['user_id']): ?>
+                            <form method="POST" action="admin.php" style="display:flex; gap:4px;">
+                                <input type="hidden" name="statut_user_id" value="<?= $u['id'] ?>">
+                                <select name="nouveau_statut" class="filtre-select" style="font-size:0.8rem; padding:3px;">
+                                    <?php foreach (['bronze','argent','gold','platine','vip','premium'] as $s): ?>
+                                        <option value="<?= $s ?>" <?= ($u['statut'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="submit" class="btn-voir" style="font-size:0.75rem; padding:3px 8px;">OK</button>
+                            </form>
+                            <?php else: ?>
+                                <?= htmlspecialchars($u['statut'] ?? '-') ?>
+                            <?php endif; ?>
+                        </td>
+
+                        <!-- Remise (modifiable pour les clients) -->
+                        <td>
+                            <?php if ($u['role'] === 'client' && $u['id'] != $_SESSION['user_id']): ?>
+                            <form method="POST" action="admin.php" style="display:flex; gap:4px; align-items:center;">
+                                <input type="hidden" name="remise_user_id" value="<?= $u['id'] ?>">
+                                <input type="number" name="remise" min="0" max="100"
+                                       value="<?= intval($u['remise'] ?? 0) ?>"
+                                       style="width:55px; padding:3px; font-size:0.8rem;">
+                                <span style="font-size:0.8rem;">%</span>
+                                <button type="submit" class="btn-voir" style="font-size:0.75rem; padding:3px 8px;">OK</button>
+                            </form>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+
+                        <td><?= $u['actif'] ? '✅ Actif' : '🔒 Bloqué' ?></td>
+
+                        <!-- Bloquer / Activer -->
+                        <td>
+                            <?php if ($u['id'] != $_SESSION['user_id']): ?>
                             <form method="POST" action="admin.php" style="display:inline;">
                                 <input type="hidden" name="toggle_user_id" value="<?= $u['id'] ?>">
                                 <button type="submit" class="btn-voir"
