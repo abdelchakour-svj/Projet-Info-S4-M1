@@ -1,9 +1,26 @@
+<?php
+/*
+ * index.php
+ * ---------------------------------------------------------------
+ * Page d'accueil du site L'Île au Fruit.
+ *
+ * Page statique (pas de formulaire POST) qui présente le concept
+ * du restaurant, une barre de recherche qui redirige vers
+ * presentation.php, et une sélection de recettes de saison.
+ * La navigation est générée par nav_html() selon l'état de
+ * connexion : visiteur, client, admin, restaurateur ou livreur.
+ *
+ * Dépendances : includes/session.php
+ */
+
+require_once 'includes/session.php';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L'Île au Fruit | Restaurant Frais & Gourmand</title>
+    <title>L'Île au Fruit | Restaurant Frais &amp; Gourmand</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -13,19 +30,7 @@
 <body>
 
     <header>
-        <nav>
-            <div class="logo">
-                <a href="index.html">
-                    <img src="image/lgoo.png" alt="Retour à l'accueil">
-                </a>
-            </div>
-            <ul>
-                <li><a href="presentation.html">Menu</a></li>
-                <li><a href="profil.html">Profil</a></li>
-                <li><a href="avis.html">Avis</a></li>
-            </ul>
-            <a href="connexion.html" class="btn-connexion">Se connecter</a>
-        </nav>
+        <?= nav_html('accueil') ?>
     </header>
 
     <main>
@@ -36,10 +41,10 @@
 
             <div class="search-bar">
                 <input type="text" placeholder="🔍 Rechercher un plat, un fruit..." id="homeSearch">
-                <a href="presentation.html"><button class="btn-search">Rechercher</button></a>
+                <a href="presentation.php"><button class="btn-search">Rechercher</button></a>
             </div>
 
-            <a href="presentation.html">
+            <a href="presentation.php">
                 <button class="btn-cta">Voir le menu</button>
             </a>
         </section>
@@ -47,20 +52,18 @@
         <section class="concept">
             <h2>Notre concept</h2>
             <p>Un lieu frais et dépaysant pour savourer la nature.</p>
-            
+
             <div class="grille">
                 <div class="card c1">
                     <img src="image/c1.png" alt="Icône Fruits">
                     <h3>Produits ultra frais</h3>
                     <p>Fruits découpés chaque jour et ingrédients sélectionnés avec soin.</p>
                 </div>
-
                 <div class="card c2">
                     <img src="image/c2.png" alt="Icône Environnement">
                     <h3>Recettes gourmandes</h3>
-                    <p>Des recettes originales pour un plaisir gourmand et sain.</p>  
-                </div>    
-
+                    <p>Des recettes originales pour un plaisir gourmand et sain.</p>
+                </div>
                 <div class="card c3">
                     <img src="image/c3.png" alt="Icône Recette">
                     <h3>Ambiance tropicale</h3>
@@ -72,7 +75,7 @@
         <section class="bottom">
             <h2>Recette de saison</h2>
             <p>Découvrez notre dessert de saison, une création fraîche et gourmande à base de fruits de saison.</p>
-            
+
             <div class="grille">
                 <div class="card c4">
                     <img src="image/image1.png" alt="Icône Recette de saison">
