@@ -42,6 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!password_verify($mdp, $utilisateur['mot_de_passe'])) {
         $erreur = 'Mot de passe incorrect.';
     } else {
+        mettre_a_jour_utilisateur($utilisateur['id'], [
+            'date_derniere_connexion' => date('Y-m-d\TH:i:s'),
+        ]);
         creer_session($utilisateur);
 
         $role = $utilisateur['role'];
